@@ -18,3 +18,6 @@ for canister in $(echo $CANISTERS | sed "s/,/ /g")
 do
     generate_did "$canister"
 done
+
+
+dfx canister call icp_rust_boilerplate_backend add_message '(record {title = "Hello World";body = "This is my first message"; attachment_url = "https://www.dacade.org";})'
