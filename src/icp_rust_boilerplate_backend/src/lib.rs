@@ -59,7 +59,7 @@ struct Shoe {
         ));
     }
 
-    // Shoe payload for adding or updating an Shoes
+    // Shoe payload for adding or updating a Shoes
     #[derive(candid::CandidType, Serialize, Deserialize, Default)]
     struct ShoePayload {
         name: String,
@@ -159,7 +159,7 @@ struct Shoe {
     }
 
  
-    // Search Shoe Items by Name
+    // Search Shoe product by Name
     #[ic_cdk::query]
     fn search_by_name(name: String) -> Vec<Shoe>  {
     SHOE_STORAGE.with(|service| {
@@ -172,7 +172,7 @@ struct Shoe {
         })
     }
 
-     // Function that likes a shoe by its id
+     // Function that likes a shoe using the shoe id
      #[ic_cdk::update]
     fn like_shoe(id: u64) -> Result<Shoe, Error> {
      match _get_shoe(&id) {
@@ -180,7 +180,7 @@ struct Shoe {
             let caller = caller();
             // Search for the index of the caller in the liked array
             let index = likes_shoe.liked_by.iter().position(|&user| user.to_string() == caller.to_string());
-            // // if an index is returned, return an error as users can only like once
+            // if an index is returned, return an error as users can only like once
             if index.is_some(){
                 return Err(Error::AlreadyLiked {
                     msg: format!("Shoe with ID {} has already been liked by caller: {}.", id, caller),
@@ -204,7 +204,7 @@ struct Shoe {
     if !_validate_owner(&_get_shoe(&id).unwrap().clone()){
         return Err(Error::NotAuthorized {
             msg: format!(
-                "You're not the owner of the event with id={}",
+                "You're not the store owner with id={}",
                 id
             ),
             caller: caller()
@@ -235,7 +235,7 @@ struct Shoe {
         SHOE_STORAGE.with(|service| service.borrow_mut().insert(shoe.id, shoe.clone()));
     }
 
-      // a helper method to get a message by id. used in get_message/update_message
+      // a helper method to get a shoe by id. used in get_shoe/update_shoe
       fn _get_shoe(id: &u64) -> Option<Shoe> {
         SHOE_STORAGE.with(|service| service.borrow().get(id))
     }
