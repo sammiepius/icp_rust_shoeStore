@@ -1,4 +1,4 @@
-# icp_rust_message_board_contract
+# icp_rust_shoeStore
 A canister project build using the rust programming language. It is a shoe storage facility where store owners can:
 1. Add shoe to the store.
 2. get a shoe by the shoe id.
