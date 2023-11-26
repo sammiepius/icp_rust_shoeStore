@@ -69,31 +69,55 @@ struct Shoe {
         quantity: i16,
     }
 
+
+    fn is_valid_price(price: i16) -> bool {
+        price > 0 // Assuming the price can't be negative
+    }
+    
+    fn is_valid_quantity(quantity: i16) -> bool {
+        quantity > 0 // Assuming at least 1 item must be present
+    }
+    
+    // validate shoe payload for price and quantity
+    fn validate_shoe_payload(payload: &ShoePayload) -> Result<(), String> {
+        if !is_valid_price(payload.price) {
+            return Err("Invalid price value".into());
+        }
+        if !is_valid_quantity(payload.quantity) {
+            return Err("Invalid quantity value".into());
+        }
+        Ok(())
+    }
+    
     // Function that add new shoes to the store
     #[ic_cdk::update]
-    fn add_shoe(shoe: ShoePayload) -> Option<Shoe> {
-        let liked_by: Vec<Principal> = Vec::new(); // initializes an empty Vec for the liked field
+    fn add_shoe(shoe_payload: ShoePayload) -> Result<Shoe, String> {
+        validate_shoe_payload(&shoe_payload)?;
+    
+        let liked_by: Vec<Principal> = Vec::new(); // Initializes an empty Vec for the liked field
         let id = ID_COUNTER
             .with(|counter| {
                 let current_value = *counter.borrow().get();
                 counter.borrow_mut().set(current_value + 1)
             })
             .expect("cannot increment id counter");
+    
         let shoe = Shoe {
             owner: caller().to_string(),
             id,
-            name: shoe.name,
-            size: shoe.size,
-            shoe_url: shoe.shoe_url,
-            price: shoe.price,
-            quantity: shoe.quantity,
+            name: shoe_payload.name,
+            size: shoe_payload.size,
+            shoe_url: shoe_payload.shoe_url,
+            price: shoe_payload.price,
+            quantity: shoe_payload.quantity,
             like: 0,
             liked_by,
             created_at: time(),
             updated_at: None,
         };
+    
         do_insert(&shoe);
-        Some(shoe)
+        Ok(shoe)
     }
 
     // get all the available shoes in the store
