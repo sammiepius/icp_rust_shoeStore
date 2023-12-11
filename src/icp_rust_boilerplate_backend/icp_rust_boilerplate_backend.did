@@ -1,3 +1,37 @@
+type Error = variant {
+  AlreadyLiked : record { msg : text };
+  NotFound : record { msg : text };
+  NotAuthorized : record { msg : text; caller : principal };
+};
+type Result = variant { Ok : Shoe; Err : text };
+type Result_1 = variant { Ok : Shoe; Err : Error };
+type Shoe = record {
+  id : nat64;
+  updated_at : opt nat64;
+  owner : text;
+  like : nat32;
+  name : text;
+  size : text;
+  shoe_url : text;
+  liked_by : vec principal;
+  created_at : nat64;
+  quantity : int16;
+  price : int16;
+};
+type ShoePayload = record {
+  name : text;
+  size : text;
+  shoe_url : text;
+  quantity : int16;
+  price : int16;
+};
 service : {
-    "greet": (text) -> (text) query;
+  add_shoe : (ShoePayload) -> (Result);
+  delete_shoe : (nat64) -> (Result_1);
+  get_shoe_by_id : (nat64) -> (Result_1) query;
+  get_shoes : () -> (vec Shoe) query;
+  like_shoe : (nat64) -> (Result_1);
+  search_by_name : (text) -> (vec Shoe) query;
+  total_number_of_shoes : () -> (int16) query;
+  update_shoe : (nat64, ShoePayload) -> (Result_1);
 }
